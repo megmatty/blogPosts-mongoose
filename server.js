@@ -27,10 +27,10 @@ app.get('/blog-posts', (req, res) => {
     // success callback: for each restaurant we got back, we'll
     // call the `.apiRepr` instance method we've created in
     // models.js in order to only expose the data we want the API return.
-    .then(blogPosts => {
+    .then(blogposts => {
       res.json({
-        blogPosts: blogPosts.map(
-          (blogPost) => blogPost.apiRepr())
+        blogposts: blogposts.map(
+          (blogpost) => blogpost.apiRepr())
       });
     })
     .catch(
@@ -47,7 +47,7 @@ app.get('/blog-posts/:id', (req, res) => {
     // by the object _id property
     .findById(req.params.id)
     .exec()
-    .then(blogPost =>res.json(blogPost.apiRepr()))
+    .then(blogpost =>res.json(blogpost.apiRepr()))
     .catch(err => {
       console.error(err);
         res.status(500).json({message: 'Internal server error'})
@@ -73,7 +73,7 @@ app.post('/blog-posts', (req, res) => {
       content: req.body.content,
       author: req.body.author})
     .then(
-      blogPost => res.status(201).json(blogPost.apiRepr()))
+      blogpost => res.status(201).json(blogpost.apiRepr()))
     .catch(err => {
       console.error(err);
       res.status(500).json({message: 'Internal server error'});
@@ -107,7 +107,7 @@ app.put('/blog-posts/:id', (req, res) => {
     // all key/value pairs in toUpdate will be updated -- that's what `$set` does
     .findByIdAndUpdate(req.params.id, {$set: toUpdate})
     .exec()
-    .then(blogPost => res.status(204).end())
+    .then(blogpost => res.status(204).end())
     .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
 
