@@ -15,23 +15,20 @@ const app = express();
 app.use(bodyParser.json());
 
 
-// GET requests to /restaurants => return 10 restaurants
+// GET requests to /blog-posts => return 10 posts
 app.get('/blog-posts', (req, res) => {
   BlogPost
     .find()
-    // we're limiting because restaurants db has > 25,000
+    // we're limiting because posts db has > 25,000
     // documents, and that's too much to process/return
     .limit(10)
     // `exec` returns a promise
     .exec()
-    // success callback: for each restaurant we got back, we'll
+    // success callback: for each post we got back, we'll
     // call the `.apiRepr` instance method we've created in
     // models.js in order to only expose the data we want the API return.
-    .then(blogposts => {
-      res.json({
-        blogposts: blogposts.map(
-          (blogpost) => blogpost.apiRepr())
-      });
+    .then(posts => {
+      res.json(posts.map(post => post.apiRepr()));
     })
     .catch(
       err => {
@@ -47,7 +44,7 @@ app.get('/blog-posts/:id', (req, res) => {
     // by the object _id property
     .findById(req.params.id)
     .exec()
-    .then(blogpost =>res.json(blogpost.apiRepr()))
+    .then(post => res.json(post.apiRepr()))
     .catch(err => {
       console.error(err);
         res.status(500).json({message: 'Internal server error'})
@@ -72,8 +69,7 @@ app.post('/blog-posts', (req, res) => {
       title: req.body.title,
       content: req.body.content,
       author: req.body.author})
-    .then(
-      blogpost => res.status(201).json(blogpost.apiRepr()))
+    .then(blogPost => res.status(201).json(blogPost.apiRepr()))
     .catch(err => {
       console.error(err);
       res.status(500).json({message: 'Internal server error'});
@@ -107,7 +103,7 @@ app.put('/blog-posts/:id', (req, res) => {
     // all key/value pairs in toUpdate will be updated -- that's what `$set` does
     .findByIdAndUpdate(req.params.id, {$set: toUpdate})
     .exec()
-    .then(blogpost => res.status(204).end())
+    .then(updatedPost => res.status(201).json(updatedPost.apiRepr()))
     .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
 
